@@ -14,7 +14,7 @@ env:
 
 jobs:
   quality:
-    name: Qualité et tests unitaires
+    name: Qualité - tests unitaires & fonctionnels
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -49,7 +49,7 @@ jobs:
           path: coverage/
 
   e2e:
-    name: Tests de bout en bout
+    name: Tests E2E
     runs-on: ubuntu-latest
     needs: quality
     services:

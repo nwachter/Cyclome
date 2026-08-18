@@ -1,5 +1,7 @@
-# Prod sur VPS : application + base sur un réseau interne isolé.
-#  port de l'app exposé, base non.
+# Prod
+# Pas de port publié : seul Caddy joint l'application (via container name).
+# => réseau cyclome-network.
+#la db posgre reste sur  réseau interne (joignable ni depuis l'ext ni depuis les autres projets.)
 services:
   app:
     build:
@@ -7,8 +9,6 @@ services:
       dockerfile: Dockerfile
     container_name: cyclome-app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://cyclome:${POSTGRES_PASSWORD}@db:5432/cyclome
@@ -17,6 +17,9 @@ services:
       NEXT_PUBLIC_APP_URL: ${APP_URL}
     volumes:
       - uploads:/app/uploads
+    networks:
+      - internal
+      - cyclome-network
     depends_on:
       db:
         condition: service_healthy
@@ -25,6 +28,24 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+
+  # Conteneur migrations si pas de CLI Prisma en prod (on repartirait donc de l'étape de compil où il y est)
+  # Lancement manuel : docker compose -f docker-compose.prod.yml run --rm migrate
+  # migrate:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: builder
+  #   command: npx prisma migrate deploy
+  #   environment:
+  #     DATABASE_URL: postgresql://cyclome:${POSTGRES_PASSWORD}@db:5432/cyclome
+  #   networks:
+  #     - internal
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   profiles:
+  #     - tools
 
   db:
     image: postgres:16-alpine
@@ -36,11 +57,19 @@ services:
       POSTGRES_DB: cyclome
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cyclome -d cyclome"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+networks:
+  internal:
+  # Réseau partagé avec Caddy (déclaré external coté caddy, doit donc être créé ici en 1e).
+  cyclome-network:
+    name: cyclome-network
 
 volumes:
   postgres_data:

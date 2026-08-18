@@ -52,6 +52,6 @@ scripts/         outillage, dont la vérification des tokens
 | `npm run db:seed`            | jeu de données de démonstration |
 | `npm run db:studio`          | explorateur de données Prisma   |
 | `npm run test`               | tests unitaires                 |
-| `npm run e2e`                | tests de bout en bout           |
+| `npm run e2e`                | tests E2E                       |
 | `npm run lint` / `typecheck` | qualité du code                 |
 | `npm run tokens:check`       | cohérence maquette / code       |

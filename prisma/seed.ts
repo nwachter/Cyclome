@@ -33,7 +33,7 @@ async function createUserIfNoneExists(
 }
 
 async function main() {
-  console.log("🌱 Début du seeding de la base de données Cyclôme...");
+  console.log("Début du seeding de la base de données Cyclôme");
 
   // Start cleanup
   await prisma.contain.deleteMany();
@@ -368,9 +368,9 @@ async function main() {
   const total = await prisma.slot.count();
   console.log(`\nTerminé ! ${total} créneaux de ${SLOT_MINUTES}m générés`);
   console.log("Comptes de démo :");
-  console.log("  admin@cyclome.fr   / AdminCyclome2026!");
-  console.log("  karim@cyclome.fr   / TechCyclome2026!");
-  console.log("  client@cyclome.fr  / ClientCyclome2026!");
+  // console.log("  admin@cyclome.fr   / AdminCyclome2026!");
+  // console.log("  karim@cyclome.fr   / TechCyclome2026!");
+  // console.log("  client@cyclome.fr  / ClientCyclome2026!");
 
   //Intervention
 
