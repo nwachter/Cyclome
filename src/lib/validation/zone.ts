@@ -1,9 +1,8 @@
 import { z } from "zod";
 
-// Assoc [longitude, latitude] tel que produit par la carte.
 const position = z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]);
 
-//Anneau = au moins 4 points, le dernier identique au premier.
+// Un anneau ferme : au moins 4 points, le dernier identique au premier.
 const linearRing = z
   .array(position)
   .min(4, "Un tracé demande au moins trois points distincts")
@@ -22,8 +21,12 @@ export const polygonSchema = z.object({
 });
 
 export const zoneCreateSchema = z.object({
-  name: z.string().trim().min(2).max(60),
-  description: z.string().trim().max(500).optional(),
+  name: z.string().trim().min(2, "Nom trop court").max(30),
+  description: z.string().trim().max(500).optional().or(z.literal("")),
+  color: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, "Couleur invalide")
+    .default("#f46036"),
   boundary: polygonSchema,
   technicianId: z.number().int().positive().nullable(),
   active: z.boolean().default(true),
@@ -32,3 +35,5 @@ export const zoneCreateSchema = z.object({
 export const zoneUpdateSchema = zoneCreateSchema.partial();
 
 export type ZoneCreateInput = z.infer<typeof zoneCreateSchema>;
+export type ZoneUpdateInput = z.infer<typeof zoneUpdateSchema>;
+export type PolygonInput = z.infer<typeof polygonSchema>;

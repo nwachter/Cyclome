@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Oswald, Blinker, Exo_2 } from "next/font/google";
 import "./globals.css";
+import QueryProvider from "@/lib/query-client";
 
 const display = Oswald({
   subsets: ["latin"],
@@ -28,7 +29,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${display.variable} ${body.variable} ${data.variable}`}>
-      <body>{children}</body>
+      <body>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }
