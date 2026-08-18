@@ -102,11 +102,11 @@ jobs:
           command_timeout: 30m
           timeout: 60s
           script: |
-            set -e
             cd ~/nwproject-apps/cyclome
             git pull origin main
-            docker compose -f docker-compose.prod.yml up -d --build app
-            docker compose -f docker-compose.prod.yml exec -T app node node_modules/prisma/build/index.js migrate deploy
+            docker compose -f docker-compose.prod.yml build app migrate
+            docker compose -f docker-compose.prod.yml run --rm migrate
+            docker compose -f docker-compose.prod.yml up -d app
             sleep 5
             docker compose -f docker-compose.prod.yml exec -T app wget -qO- http://localhost:3000/api/health
             docker image prune -f
