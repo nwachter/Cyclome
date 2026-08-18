@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-/*
- * Validation des variables d'environnement au démarrage. 1 variable manquante=  lancement échoue avec un message clair, plutôt qu'une erreur non attrapée au 1e appel db.
- */
+/* Validation des variables env au démarrage. 1 variable manquante=  lancement échoue avec un message clair, plutôt qu'une erreur non attrapée au 1e appel db.*/
 const schema = z.object({
   DATABASE_URL: z.string().url(),
   BETTER_AUTH_SECRET: z.string().min(32, "Générez une clé d'au moins 32 caractères"),
