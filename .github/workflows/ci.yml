@@ -16,6 +16,7 @@ jobs:
   quality:
     name: Qualité - tests unitaires & fonctionnels
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:16-alpine
@@ -52,6 +53,11 @@ jobs:
     name: Tests E2E
     runs-on: ubuntu-latest
     needs: quality
+    timeout-minutes: 20
+    # img officielle Playwright
+    # !! e tag DOIT correspondre exactement à la version résolue de @playwright/test (vérifiable avec npx playwright --version)
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
     services:
       postgres:
         image: postgres:16-alpine
@@ -59,10 +65,11 @@ jobs:
           POSTGRES_USER: cyclome
           POSTGRES_PASSWORD: cyclome_ci
           POSTGRES_DB: cyclome_test
-        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U cyclome"
           --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://cyclome:cyclome_ci@postgres:5432/cyclome_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -71,7 +78,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx prisma generate && npx prisma migrate deploy && npm run db:seed
-      - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npm run e2e
       - uses: actions/upload-artifact@v4
@@ -85,6 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [quality, e2e]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    timeout-minutes: 10
     steps:
       - name: Connexion SSH et mise à jour
         uses: appleboy/ssh-action@v1
