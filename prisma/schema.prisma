@@ -1,0 +1,370 @@
+// =============================================================================
+// CYCLÔME : schéma de données
+//
+// Transcription directe du MCD. Chaque modèle et chaque champ porte un @map
+// vers le nom exact du MCD : la base physique est donc identique au script SQL
+// du dossier de conception, ce qui rend la correspondance vérifiable à l'oral.
+//
+// Trois conventions de traduction :
+//   CURRENCY                -> Decimal(10, 2)
+//   LOGICAL                 -> Boolean
+//   GEOGRAPHY(POINT|POLYGON) -> Json au format GeoJSON
+//     Le cahier des charges technique écarte l'extension PostGIS : les tracés
+//     sont stockés en GeoJSON et lus directement par Turf.js.
+//
+// Les tables Session, Account et Verification ne figurent pas au MCD : elles
+// sont générées et maintenues par Better Auth. Account porte le hachage du mot
+// de passe (providerId = "credential"), ce qui explique son absence de User_.
+// Régénérez ce bloc avec `npm run auth:generate` après une montée de version.
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// enms
+enum UserRole {
+  CLIENT     @map("CLIENT")
+  ADMIN      @map("ADMIN")
+  TECHNICIAN @map("TECHNICIAN")
+
+  @@map("user_role")
+}
+
+enum CycleType {
+  MECHANICAL
+  ELECTRICAL
+
+  @@map("cycle_type")
+}
+
+enum PictureStage {
+  AT_BOOKING
+  BEFORE_WORK
+  AFTER_WORK
+
+  @@map("picture_stage")
+}
+
+enum InterventionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("intervention_status")
+}
+
+
+model User {
+  id            String     @id @map("user_id") @db.VarChar(50)
+  email         String     @unique @map("user_email") @db.VarChar(300)
+  name          String     @map("user_name") @db.VarChar(300)
+  role          UserRole?  @default(CLIENT) @map("user_role")
+  image      String?    @map("user_image_url") @db.VarChar(150)
+  //also delete Session lines for deactivated / deconnected users
+  status        String     @default("ACTIVE") @map("user_status") @db.VarChar(20)
+  emailVerified Boolean    @default(false) @map("user_email_verified")
+  createdAt     DateTime   @default(now()) @map("user_created_at")
+  updatedAt     DateTime   @updatedAt @map("user_updated_at")
+
+  client              Client?
+  technician          Technician?
+  pictures            Picture[]
+  cancelledInterventions Intervention[] @relation("CancelledBy")
+  sessions            Session[]
+  accounts            Account[]
+
+  @@map("user_")
+}
+
+// tables Better Auth
+
+model Session {
+  id        String   @id @db.VarChar(50)
+  userId    String   @map("id_user") @db.VarChar(50)
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime
+  ipAddress String?  @db.VarChar(45)
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @db.VarChar(50)
+  userId                String    @map("id_user") @db.VarChar(50)
+  accountId             String    @db.VarChar(255)
+  providerId            String    @db.VarChar(50)
+  /// Hachage du mdp pour le fournisseur "credential"
+  password              String?   @db.VarChar(255)
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @db.VarChar(50)
+  identifier String   @db.VarChar(300)
+  value      String   @db.VarChar(255)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+  @@index([identifier])
+}
+
+// profils
+
+model Client {
+  id            Int            @id @default(autoincrement()) @map("client_id")
+  lastname      String         @map("client_lastname") @db.VarChar(30)
+  firstname     String         @map("client_firstname") @db.VarChar(30)
+  address       String         @map("client_address") @db.VarChar(100)
+  phone         String?        @map("client_phone") @db.VarChar(15)
+  postalCode    String         @map("client_postal_code") @db.VarChar(10)
+  city          String         @map("client_city") @db.VarChar(30)
+  // Point GeoJSON : { "type": "Point", "coordinates": [lng, lat] }
+  location      Json?          @map("client_location")
+  userId        String         @unique @map("id_user") @db.VarChar(50)
+
+  user          User           @relation(fields: [userId], references: [id])
+  cycles        Cycle[]
+  interventions Intervention[]
+
+  @@map("client")
+}
+
+model Technician {
+  id            Int            @id @default(autoincrement()) @map("technician_id") @db.SmallInt
+  phone         String?        @map("technician_phone") @db.VarChar(15)
+  //Dernière position connue, alimentée pendant une intervention
+  location      Json?          @map("technician_location")
+  userId        String         @unique @map("id_user") @db.VarChar(50)
+
+  user          User           @relation(fields: [userId], references: [id])
+  zones         Zone[]
+  interventions Intervention[]
+
+  @@map("technician")
+}
+
+// vélos
+
+model Cycle {
+  id            Int            @id @default(autoincrement()) @map("cycle_id")
+  type          CycleType      @map("cycle_type")
+  /// Usage : Ville, VTC, VTT, Route, Pliant, Cargo
+  category      String?        @map("cycle_category") @db.VarChar(30)
+  brand         String         @map("cycle_brand") @db.VarChar(50)
+  model         String         @map("cycle_model") @db.VarChar(50)
+  year          Int            @map("cycle_year") @db.SmallInt
+  motorisation  String?        @map("cycle_motorisation") @db.VarChar(60)
+  status        String         @map("cycle_status") @db.VarChar(15)
+  clientId      Int            @map("id_client")
+
+  client        Client         @relation(fields: [clientId], references: [id])
+  interventions Intervention[]
+
+  @@index([clientId])
+  @@map("cycle_")
+}
+
+model OperationType {
+  id          Int       @id @default(autoincrement()) @map("operation_type_id")
+  name        String    @map("operation_type_name") @db.VarChar(50)
+  description String?   @map("operation_type_description") @db.VarChar(500)
+
+  packages    Package[]
+
+  @@map("operation_type")
+}
+
+model Package {
+  id              Int            @id @default(autoincrement()) @map("package_id")
+  name            String?        @map("package_name") @db.VarChar(100)
+  // Durée en minutes
+  duration        Int            @map("package_duration")
+  price           Decimal        @map("package_price") @db.Decimal(10, 2)
+  description     String?        @map("package_description")
+  active          Boolean        @default(true) @map("package_active")
+  operationTypeId Int            @map("id_operation_type")
+
+  operationType   OperationType  @relation(fields: [operationTypeId], references: [id])
+  interventions   Intervention[]
+
+  @@index([operationTypeId])
+  @@map("package")
+}
+
+model Product {
+  id          Int       @id @default(autoincrement()) @map("product_id")
+  name        String?   @map("product_name") @db.VarChar(100)
+  reference   String    @unique @map("product_reference") @db.VarChar(30)
+  price       Decimal   @map("product_price") @db.Decimal(10, 2)
+  description String?   @map("product_description") @db.VarChar(1000)
+  status      String    @map("product_status") @db.VarChar(15)
+
+  contains    Contain[]
+
+  @@map("product")
+}
+
+// zones, disponibilités, créneaux
+
+model Zone {
+  id             Int            @id @default(autoincrement()) @map("zone_id")
+  name           String         @map("zone_name") @db.VarChar(30)
+  // Polygone GeoJSON lu directement par Turfjs
+  boundary       Json           @map("zone_boundary")
+  description    String?        @map("zone_description") @db.VarChar(500)
+  color          String?        @map("zone_color") @db.VarChar(20)
+  active         Boolean        @default(true) @map("zone_active")
+  technicianId   Int?           @map("id_technician") @db.SmallInt
+
+  technician     Technician?    @relation(fields: [technicianId], references: [id])
+  availabilities Availability[]
+
+  @@index([technicianId])
+  @@map("zone")
+}
+
+model Availability {
+  id        Int      @id @default(autoincrement()) @map("availability_id")
+  startDate DateTime @map("availability_start_date")
+  endDate   DateTime @map("availability_end_date")
+  zoneId    Int      @map("id_zone")
+
+  zone      Zone     @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  slots     Slot[]
+
+  @@index([zoneId, startDate])
+  @@map("availability")
+}
+
+// 1 créneau = max une intervention Intervention.slotId).  un forfait plus long démarre sur l'un d'eux et marque `booked` ceux qu'il recouvre (transaction de réservation)
+model Slot {
+  id             Int           @id @default(autoincrement()) @map("slot_id")
+  startDate      DateTime      @map("slot_start_date")
+  endDate        DateTime      @map("slot_end_date")
+  booked         Boolean       @default(false) @map("slot_booked")
+  availabilityId Int           @map("id_availability")
+
+  availability   Availability  @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
+  intervention   Intervention?
+
+  @@unique([availabilityId, startDate])
+  @@index([startDate, booked])
+  @@map("slot")
+}
+
+// interventions
+
+model Intervention {
+  id                 Int        @id @default(autoincrement()) @map("intervention_id")
+  // Problème signalé par le client à la réservation
+  description        String     @map("intervention_description") @db.VarChar(1000)
+  address            String     @map("intervention_address") @db.VarChar(150)
+  addressComplement  String?    @map("intervention_address_complement") @db.VarChar(150)
+  postalCode         String     @map("intervention_postal_code") @db.VarChar(15)
+  city               String     @map("intervention_city") @db.VarChar(30)
+  // Point GeoJSON de l'adresse d'intervention
+  location           Json       @map("intervention_location")
+  totalPrice         Decimal    @map("intervention_total_price") @db.Decimal(10, 2)
+  date               DateTime  @map("intervention_date")
+  // Durée du forfait à la réservation 
+  duration           Int        @map("intervention_duration")
+  status             InterventionStatus @map("intervention_status")
+  startedAt          DateTime?  @map("intervention_started_at")
+  completedAt        DateTime?  @map("intervention_completed_at")
+  cancelledAt        DateTime?  @map("intervention_cancelled_at")
+  cancellationReason String?    @map("intervention_cancellation_reason") @db.VarChar(1000)
+  technicianComment  String?    @map("intervention_technician_comment")
+
+  cancelledById      String?    @map("id_cancelled_by") @db.VarChar(50)
+  cycleId            Int        @map("id_cycle")
+  packageId          Int        @map("id_package")
+  slotId             Int        @unique @map("id_slot")
+  technicianId       Int        @map("id_technician") @db.SmallInt
+  clientId           Int        @map("id_client")
+
+  cancelledBy        User?      @relation("CancelledBy", fields: [cancelledById], references: [id])
+  cycle              Cycle      @relation(fields: [cycleId], references: [id])
+  package            Package    @relation(fields: [packageId], references: [id])
+  slot               Slot       @relation(fields: [slotId], references: [id])
+  technician         Technician @relation(fields: [technicianId], references: [id])
+  client             Client     @relation(fields: [clientId], references: [id])
+
+  pictures           Picture[]
+  contains           Contain[]
+
+  @@index([date, status])
+  @@index([technicianId, date])
+  @@index([clientId])
+  @@map("intervention")
+}
+
+/// Le moment de la prise de vue est porté par `stage`, l'auteur par la clé étrangère vers l'utilisateur. rôle de l'auteur déduit via jointure
+model Picture {
+  id             Int          @id @default(autoincrement()) @map("picture_id")
+  url            String       @map("picture_url") @db.VarChar(150)
+  mimeType       String       @map("picture_mime_type") @db.VarChar(30)
+  stage          PictureStage @map("picture_stage")
+  createdAt      DateTime     @default(now()) @map("picture_created_at")
+  userId         String       @map("id_user") @db.VarChar(50)
+  interventionId Int          @map("id_intervention")
+
+  user           User         @relation(fields: [userId], references: [id])
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+
+  @@index([interventionId, stage])
+  @@map("picture")
+}
+
+model Contain {
+  interventionId Int          @map("id_intervention")
+  productId      Int          @map("id_product")
+  quantity       Int          @map("quantity") @db.SmallInt
+  //Prix figé au moment de la commande
+  unitPrice      Decimal      @map("unit_price") @db.Decimal(10, 2)
+
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  product        Product      @relation(fields: [productId], references: [id])
+
+  @@id([interventionId, productId])
+  @@map("contain")
+}
+
+// société
+
+model Society {
+  id          Int     @id @default(autoincrement()) @map("society_id")
+  name        String  @map("society_name") @db.VarChar(50)
+  phone       String  @map("society_phone") @db.VarChar(15)
+  description String? @map("society_description") @db.VarChar(1000)
+  logoUrl     String? @map("society_logo_url") @db.VarChar(500)
+  address     String  @map("society_address") @db.VarChar(200)
+
+  @@map("society")
+}

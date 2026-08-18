@@ -1,0 +1,266 @@
+@import "tailwindcss";
+
+/* 
+   THÈME : design/cyclome.tokens.json
+   Chaque variable reprend un token. Tailwind en dérive les classes :
+     --color-flame-500  ->  bg-flame-500 / text-flame-500 / border-flame-500
+     --spacing-lg       ->  p-lg / gap-lg / mt-lg
+     --text-4xl         ->  text-4xl
+     --font-display     ->  font-display
+   `npm run tokens:check` vérifie que ce bloc et le JSON ne divergent pas.
+    */
+
+@theme {
+  /*  primitives : flame (accent de marque)  */
+  --color-flame-50: #fef0eb;
+  --color-flame-100: #fdd9cd;
+  --color-flame-200: #fabba5;
+  --color-flame-300: #f89a7b;
+  --color-flame-400: #f67d57;
+  --color-flame-500: #f46036;
+  --color-flame-600: #df4a20;
+  --color-flame-700: #bc3a16;
+  --color-flame-800: #932c0f;
+  --color-flame-900: #5f1c09;
+
+  /*  primitives : marine (bleu pétrole)  */
+  --color-marine-50: #e6f0f6;
+  --color-marine-100: #c2dcea;
+  --color-marine-200: #8fbfd8;
+  --color-marine-300: #5a9cc0;
+  --color-marine-400: #2e77a2;
+  --color-marine-500: #0b5581;
+  --color-marine-600: #044469;
+  --color-marine-700: #003459;
+  --color-marine-800: #002740;
+  --color-marine-900: #001a2b;
+
+  /*  primitives : parchemin (neutre chaud)  */
+  --color-parchment-50: #fffcfa;
+  --color-parchment-100: #fcf7f3;
+  --color-parchment-200: #f8f1ec;
+  --color-parchment-300: #efe5dc;
+  --color-parchment-400: #e1d3c6;
+  --color-parchment-500: #c9b7a6;
+  --color-parchment-600: #a08d7c;
+  --color-parchment-700: #766659;
+  --color-parchment-800: #4c4038;
+  --color-parchment-900: #2a231e;
+
+  /*  primitives : encre  */
+  --color-ink-700: #3a322c;
+  --color-ink-800: #211c18;
+  --color-ink-900: #121010;
+
+  /*  primitives : retours utilisateur  */
+  --color-success-50: #e7f3ef;
+  --color-success-500: #17795c;
+  --color-success-700: #0f5741;
+  --color-warning-50: #fbf3e0;
+  --color-warning-500: #d69e12;
+  --color-warning-700: #9e7208;
+  --color-danger-50: #f9e9ec;
+  --color-danger-500: #c42b3f;
+  --color-danger-700: #921f2e;
+
+  /*  rôles : fonds  */
+  --color-canvas: var(--color-parchment-200);
+  --color-surface: var(--color-parchment-50);
+  --color-sunken: var(--color-parchment-300);
+  --color-inverse: var(--color-marine-700);
+  --color-inverse-deep: var(--color-marine-800);
+  --color-contrast: var(--color-ink-900);
+  --color-accent: var(--color-flame-500);
+  --color-accent-hover: var(--color-flame-600);
+  --color-accent-strong: var(--color-flame-700);
+  --color-accent-subtle: var(--color-flame-50);
+
+  /*  rôles : texte 
+     accessibilité : Utiliser sur fond clair fg-accent (flame-700, 5,0:1) pour le texte,
+     fg-accent-display (flame-600, 3,7:1) à partir de 24 px, et fg-on-accent
+     (encre, 5,9:1) sur un aplt flame. */
+  --color-fg: var(--color-ink-900);
+  --color-fg-muted: var(--color-parchment-800);
+  --color-fg-subtle: var(--color-parchment-700);
+  --color-fg-disabled: var(--color-parchment-600);
+  --color-fg-accent: var(--color-flame-700);
+  --color-fg-accent-display: var(--color-flame-600);
+  --color-fg-on-accent: var(--color-ink-900);
+  --color-fg-on-inverse: var(--color-parchment-50);
+  --color-fg-accent-inverse: var(--color-flame-400);
+
+  /*  rôles : filets  */
+  --color-line-subtle: rgb(18 16 16 / 0.08);
+  --color-line: rgb(18 16 16 / 0.15);
+  --color-line-strong: var(--color-ink-900);
+  --color-line-inverse: rgb(255 252 250 / 0.25);
+
+  /*  statuts métier  */
+  --color-status-draft: var(--color-parchment-600);
+  --color-status-scheduled: var(--color-marine-500);
+  --color-status-progress: var(--color-flame-500);
+  --color-status-done: var(--color-success-500);
+  --color-status-cancelled: var(--color-danger-500);
+  --color-zone-a: var(--color-flame-500);
+  --color-zone-b: var(--color-marine-500);
+  --color-zone-c: var(--color-success-500);
+  --color-zone-d: var(--color-warning-500);
+
+  /*  espacement  */
+  --spacing-3xs: 2px;
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --spacing-4xl: 96px;
+  --spacing-5xl: 128px;
+  --spacing-6xl: 160px;
+
+  /*  typographie  */
+  --font-display: "Oswald", Impact, sans-serif;
+  --font-body: "Blinker", system-ui, sans-serif;
+  --font-data: "Exo 2", sans-serif;
+
+  --text-3xs: 10px;
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 21px;
+  --text-2xl: 25px;
+  --text-3xl: 30px;
+  --text-4xl: 38px;
+  --text-5xl: 48px;
+  --text-6xl: 60px;
+  --text-7xl: 80px;
+
+  /*  formes  */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  --shadow-hard-sm: 4px 4px 0 var(--color-ink-900);
+  --shadow-hard: 6px 6px 0 var(--color-ink-900);
+  --shadow-overlay: 0 18px 40px -8px rgb(18 16 16 / 0.32);
+
+  /*  mouvement  */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Bases/ composants récurent */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-accent-strong);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-fg-on-accent);
+  }
+}
+
+@layer components {
+
+  /* Styles texte issus venant des tokens semantic.typography.* */
+  .t-display-1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-6xl);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .t-display-2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-4xl);
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  .t-display-3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-2xl);
+    line-height: 0.98;
+    text-transform: uppercase;
+  }
+
+  .t-display-4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    line-height: 0.98;
+    text-transform: uppercase;
+  }
+
+  .t-label {
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .t-label-sm {
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: var(--text-3xs);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .t-data {
+    font-family: var(--font-data);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
