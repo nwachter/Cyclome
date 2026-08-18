@@ -5,8 +5,7 @@ import type { PolygonInput } from "@/lib/validation/zone";
 
 export type ZoneMode = { kind: "list" } | { kind: "edit"; zoneId: number } | { kind: "create" };
 
-// Regroupe l'etat de navigation du panneau et du trace en cours,
-// pour que ZonesView ne porte plus cinq useState.
+// etat de navigation du panneau + etat trace en cours,
 export function useZoneDrawing() {
   const [mode, setMode] = useState<ZoneMode>({ kind: "list" });
   const [draftBoundary, setDraftBoundary] = useState<PolygonInput | null>(null);

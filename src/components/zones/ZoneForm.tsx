@@ -1,10 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { ZoneListItem } from "@/server/zones";
 import type { PolygonInput } from "@/lib/validation/zone";
 
 type Technician = { id: number; name: string };
+
+export type ZoneFormValues = {
+  name: string;
+  description: string;
+  color: string;
+  technicianId: number | null;
+  active: boolean;
+};
 
 type Props = {
   zone: ZoneListItem | null;
@@ -14,15 +23,8 @@ type Props = {
   isSaving: boolean;
   isDeleting: boolean;
   errorMessage: string;
-  onBack: () => void;
   onStartDrawing: () => void;
-  onSave: (values: {
-    name: string;
-    description: string;
-    color: string;
-    technicianId: number | null;
-    active: boolean;
-  }) => void;
+  onSave: (values: ZoneFormValues) => void;
   onDelete: () => void;
 };
 
@@ -36,7 +38,6 @@ export default function ZoneForm({
   isSaving,
   isDeleting,
   errorMessage,
-  onBack,
   onStartDrawing,
   onSave,
   onDelete,
@@ -51,26 +52,20 @@ export default function ZoneForm({
 
   return (
     <>
-      <div className="border-b border-b-line p-lg">
-        <button type="button" onClick={onBack} className="t-label mb-sm text-fg-accent">
-          Toutes les zones
-        </button>
-        <div className="flex items-center justify-between gap-sm">
-          <span className="flex items-center gap-sm">
-            <span className="size-[18px]" style={{ backgroundColor: color }} />
-            <span className="t-display-3">{name || "Nouvelle zone"}</span>
-          </span>
-          {zone && (
-            <span
-              className={`t-label-sm px-xs py-3xs ${
-                active ? "bg-success-50 text-success-500" : "border border-line text-fg-subtle"
-              }`}
-            >
-              {active ? "Active" : "En pause"}
-            </span>
-          )}
+      {zone && (
+        <div className="grid grid-cols-2 gap-px bg-line">
+          <div className="bg-surface px-md py-sm">
+            <b className="block font-data text-2xl italic text-fg-accent">{zone.areaKm2}</b>
+            <span className="t-label-sm text-fg-subtle">km² de superficie</span>
+          </div>
+          <div className="bg-surface px-md py-sm">
+            <b className="block font-data text-2xl italic text-fg-accent">
+              {zone.availabilityCount}
+            </b>
+            <span className="t-label-sm text-fg-subtle">plages ouvertes</span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-col gap-md p-lg">
         {errorMessage && (
@@ -80,18 +75,21 @@ export default function ZoneForm({
         )}
 
         {zone && (
-          <div className="grid grid-cols-2 gap-px bg-line">
-            <div className="bg-surface p-sm px-md">
-              <b className="block font-data text-xl italic text-fg-accent">{zone.areaKm2} km²</b>
-              <span className="t-label-sm text-fg-subtle">superficie</span>
-            </div>
-            <div className="bg-surface p-sm px-md">
-              <b className="block font-data text-xl italic text-fg-accent">
-                {zone.availabilityCount}
-              </b>
-              <span className="t-label-sm text-fg-subtle">plages ouvertes</span>
-            </div>
-          </div>
+          <Link
+            href={`/admin/zones/${zone.id}/disponibilites`}
+            className="t-label flex min-h-[44px] items-center justify-between border border-line-strong bg-surface px-md hover:bg-sunken"
+          >
+            Gérer les disponibilités
+            <svg
+              viewBox="0 0 24 24"
+              className="size-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+            >
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         )}
 
         <div>
@@ -153,7 +151,9 @@ export default function ZoneForm({
                 type="button"
                 aria-label={`Couleur ${choice}`}
                 onClick={() => setColor(choice)}
-                className={`size-9 border-2 ${color === choice ? "border-line-strong" : "border-transparent"}`}
+                className={`size-9 border-2 ${
+                  color === choice ? "border-line-strong" : "border-transparent"
+                }`}
                 style={{ backgroundColor: choice }}
               />
             ))}

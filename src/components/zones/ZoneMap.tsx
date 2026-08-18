@@ -10,8 +10,7 @@ import type { ZoneListItem } from "@/server/zones";
 import type { PolygonInput } from "@/lib/validation/zone";
 
 const LYON_CENTER: [number, number] = [45.758, 4.835];
-
-// GeoJSON range les points en [longitude, latitude], Leaflet attend l'inverse.
+//Leaflet attend l'inverse de GeoJson
 function toLeafletPositions(boundary: PolygonInput): [number, number][] {
   const ring = boundary.coordinates[0] ?? [];
   return ring.map(([lng, lat]) => [lat, lng]);
@@ -107,13 +106,7 @@ export default function ZoneMap({
   const focus = draftBoundary ?? selectedZone?.boundary ?? null;
 
   return (
-    <MapContainer
-      center={LYON_CENTER}
-      zoom={12}
-      scrollWheelZoom
-      className="h-full w-full"
-      style={{ minHeight: 620 }}
-    >
+    <MapContainer center={LYON_CENTER} zoom={12} scrollWheelZoom className="h-full w-full">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
