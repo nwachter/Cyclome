@@ -106,7 +106,7 @@ jobs:
             cd ~/nwproject-apps/cyclome
             git pull origin main
             docker compose -f docker-compose.prod.yml up -d --build app
-            docker compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy
+            docker compose -f docker-compose.prod.yml exec -T app node node_modules/prisma/build/index.js migrate deploy
             sleep 5
             docker compose -f docker-compose.prod.yml exec -T app wget -qO- http://localhost:3000/api/health
             docker image prune -f
