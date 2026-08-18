@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Deps
 FROM node:22-alpine AS deps
 
