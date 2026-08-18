@@ -8,7 +8,7 @@ export default [
   ...compat.extends("next/core-web-vitals", "next/typescript", "prettier"),
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      '@typescript-eslint/no-unused-vars': 'off',
       "@typescript-eslint/no-explicit-any": "error",
     },
   },

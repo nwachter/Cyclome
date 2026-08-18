@@ -1,7 +1,7 @@
 # Prod
 # Pas de port publié : seul Caddy joint l'application (via container name).
 # => réseau cyclome-network.
-#la db posgre reste sur  réseau interne (joignable ni depuis l'ext ni depuis les autres projets.)
+#la db posgre reste sur réseau interne (joignable ni depuis l'ext ni depuis les autres projets.)
 services:
   app:
     build:
@@ -29,7 +29,7 @@ services:
       timeout: 5s
       retries: 3
 
-  # Conteneur migrations si pas de CLI Prisma en prod (on repartirait donc de l'étape de compil où il y est)
+  # Conteneur migrations pour déployer les migrations en production
   # Lancement manuel : docker compose -f docker-compose.prod.yml run --rm migrate
   migrate:
     build:
