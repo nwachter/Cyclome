@@ -245,32 +245,58 @@ async function main() {
     );
   }
 
-  // Quatre quadrants autour de Lyon. Les couleurs reprennent les tokens de zone
-  // de la maquette, pour que la carte et le planning soient cohérents.
+  // Quatre zones autour de Lyon.
+  // const zoneSeeds = [
+  //   {
+  //     name: "Est",
+  //     color: "#f46036",
+  //     description: "Lyon 3e, 6e, 7e et communes limitrophes à l'est du Rhône.",
+  //     box: [4.86, 45.75, 4.95, 45.79],
+  //   },
+  //   {
+  //     name: "Nord",
+  //     color: "#0b5581",
+  //     description: "Caluire, Rillieux et le nord de la Croix-Rousse.",
+  //     box: [4.82, 45.79, 4.92, 45.83],
+  //   },
+  //   {
+  //     name: "Ouest",
+  //     color: "#17795c",
+  //     description: "Lyon 5e, 9e, Tassin et Écully.",
+  //     box: [4.74, 45.75, 4.83, 45.79],
+  //   },
+  //   {
+  //     name: "Sud",
+  //     color: "#d69e12",
+  //     description: "Lyon 7e sud, 8e, Vénissieux et Saint-Fons.",
+  //     box: [4.84, 45.7, 4.93, 45.74],
+  //   },
+  // ];
+
   const zoneSeeds = [
     {
       name: "Est",
       color: "#f46036",
       description: "Lyon 3e, 6e, 7e et communes limitrophes à l'est du Rhône.",
-      box: [4.86, 45.75, 4.95, 45.79],
+      box: [4.83, 45.75, 4.95, 45.83],
     },
     {
       name: "Nord",
       color: "#0b5581",
       description: "Caluire, Rillieux et le nord de la Croix-Rousse.",
-      box: [4.82, 45.79, 4.92, 45.83],
+      box: [4.74, 45.83, 4.95, 45.9],
     },
     {
       name: "Ouest",
       color: "#17795c",
       description: "Lyon 5e, 9e, Tassin et Écully.",
-      box: [4.74, 45.75, 4.83, 45.79],
+      box: [4.74, 45.7, 4.83, 45.83],
     },
     {
       name: "Sud",
       color: "#d69e12",
-      description: "Lyon 7e sud, 8e, Vénissieux et Saint-Fons.",
-      box: [4.84, 45.7, 4.93, 45.74],
+      description: "Lyon 8e, Vénissieux et Saint-Fons.",
+      box: [4.83, 45.7, 4.95, 45.75],
     },
   ];
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Hero() {
   return (
@@ -32,7 +33,14 @@ export default function Hero() {
           </div>
         </div>
 
-        <HeroArtwork />
+        {/* <HeroArtwork /> */}
+        <Image
+          src="/image-bg-hero.svg"
+          alt="Image de technicien en fond du hero de l'accueil"
+          width={820}
+          height={600}
+          className="hidden lg:block"
+        />
       </div>
     </section>
   );
@@ -73,7 +81,14 @@ function HeroArtwork() {
           <path d="M320 260v224M208 372h224M240 292l160 160M400 292L240 452" />
           <path d="M606 260v224M494 372h224M526 292l160 160M686 292L526 452" />
         </g>
-        <circle cx="462" cy="372" r="29" fill="none" stroke="var(--color-inverse)" strokeWidth="10" />
+        <circle
+          cx="462"
+          cy="372"
+          r="29"
+          fill="none"
+          stroke="var(--color-inverse)"
+          strokeWidth="10"
+        />
         <circle cx="320" cy="372" r="13" fill="var(--color-inverse)" />
         <circle cx="606" cy="372" r="13" fill="var(--color-inverse)" />
         <path

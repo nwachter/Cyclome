@@ -6,13 +6,12 @@ export default function FinalCta() {
       <div className="mx-auto flex max-w-[1360px] flex-wrap items-center justify-between gap-xl px-xl">
         <div>
           <h2 className="t-display-1">
-            Votre créneau
+            Partez
             <br />
-            vous attend.
+            En roue Libre
           </h2>
           <p className="mt-sm max-w-[34ch] opacity-80">
-            Renseignez votre adresse, nous vous montrons les horaires réellement libres dans votre
-            zone.
+            Renseignez votre adresse, nous nous occupons du reste.
           </p>
         </div>
         <Link

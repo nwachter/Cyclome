@@ -16,8 +16,8 @@ const steps = [
   },
   {
     number: "04",
-    title: "Vous roulez",
-    text: "Compte rendu dans l'application, historique conservé pour la prochaine fois.",
+    title: "Roulez !",
+    text: "",
   },
 ];
 

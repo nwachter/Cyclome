@@ -17,12 +17,12 @@ export default function PackageList({ packages }: { packages: PackageItem[] }) {
           <h2 className="t-display-1">
             Un prix fixe,
             <br />
-            <span className="text-fg-accent-display">une durée fixe</span>
+            <span className="text-fg-accent-display">Adapté à votre besoin</span>
           </h2>
         </div>
         <p className="max-w-[38ch] text-fg-muted">
-          Le forfait détermine la durée de l&apos;intervention, et la durée détermine les créneaux
-          qui vous sont proposés. Aucune surprise à l&apos;arrivée.
+          Vélo mécanique ou électrique, diagnostic ou réparation complète, 6j/7, prix fixe. Aucune
+          surprise à l&apos;arrivée.
         </p>
       </div>
 
