@@ -190,6 +190,10 @@
     background: var(--color-accent);
     color: var(--color-fg-on-accent);
   }
+
+  .leaflet-container {
+    z-index: 0;
+  }
 }
 
 @layer components {

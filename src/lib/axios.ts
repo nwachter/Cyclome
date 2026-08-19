@@ -15,9 +15,8 @@ export const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Nos routes API renvoient toujours { message } en cas d'erreur.
-// L'intercepteur remonte ce message pour que les composants n'aient pas
-// a fouiller dans error.response.data a chaque fois.
+// routes API renvoie  { message } en cas d'erreur, récupéré ici
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {

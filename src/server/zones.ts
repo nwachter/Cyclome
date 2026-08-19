@@ -25,6 +25,43 @@ export async function getZones() {
     },
   });
 
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  // 2 compteurs affiches dans le detail.
+  const [interventionCounts, freeSlotCounts] = await Promise.all([
+    prisma.intervention.groupBy({
+      by: ["technicianId"],
+      where: { date: { gte: startOfMonth } },
+      _count: { _all: true },
+    }),
+    prisma.slot.groupBy({
+      by: ["availabilityId"],
+      where: { booked: false, startDate: { gt: new Date() } },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const availabilities = await prisma.availability.findMany({
+    select: { id: true, zoneId: true },
+  });
+
+  function countFreeSlots(zoneId: number) {
+    return availabilities
+      .filter((availability) => availability.zoneId === zoneId)
+      .reduce((total, availability) => {
+        const found = freeSlotCounts.find((row) => row.availabilityId === availability.id);
+        return total + (found?._count._all ?? 0);
+      }, 0);
+  }
+
+  function countInterventions(technicianId: number | null) {
+    if (technicianId === null) return 0;
+    const found = interventionCounts.find((row) => row.technicianId === technicianId);
+    return found?._count._all ?? 0;
+  }
+
   return zones.map((zone) => ({
     id: zone.id,
     name: zone.name,
@@ -36,6 +73,8 @@ export async function getZones() {
     technicianName: zone.technician?.user.name ?? null,
     areaKm2: zoneAreaKm2(zone.boundary as unknown as PolygonGeometry),
     availabilityCount: zone._count.availabilities,
+    interventionsThisMonth: countInterventions(zone.technicianId),
+    freeSlotsAhead: countFreeSlots(zone.id),
   }));
 }
 
