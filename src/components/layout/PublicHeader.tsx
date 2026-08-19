@@ -14,15 +14,9 @@ export default async function PublicHeader() {
         </div>
 
         <nav aria-label="Navigation principale" className="hidden gap-xl md:flex">
-          <Link href="/#services" className="t-label">
-            Services
-          </Link>
-          <Link href="/#forfaits" className="t-label">
-            Forfaits
-          </Link>
-          <Link href="/#zones" className="t-label">
-            Zones
-          </Link>
+          <Link href="/#services" className="t-label">Services</Link>
+          <Link href="/#forfaits" className="t-label">Forfaits</Link>
+          <Link href="/#zones" className="t-label">Zones</Link>
         </nav>
 
         {user ? (

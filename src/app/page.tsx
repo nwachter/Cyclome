@@ -1,18 +1,28 @@
-export default function Home() {
+import PublicHeader from "@/components/layout/PublicHeader";
+import PublicFooter from "@/components/layout/PublicFooter";
+import Hero from "@/components/home/Hero";
+import StatsBar from "@/components/home/StatsBar";
+import HowItWorks from "@/components/home/HowItWorks";
+import Ticker from "@/components/home/Ticker";
+import PackageList from "@/components/home/PackageList";
+import FinalCta from "@/components/home/FinalCta";
+import { getActivePackages } from "@/server/catalog";
+
+export default async function HomePage() {
+  const packages = await getActivePackages();
+
   return (
-    <main className="mx-auto max-w-[1360px] px-xl py-4xl">
-      <p className="t-label-sm text-fg-accent">Cyclôme</p>
-      <h1 className="t-display-1 mt-md">La réparation vélo à domicile</h1>
-      <p className="mt-lg max-w-[60ch] text-fg-muted">
-        Squelette de départ. Le thème Tailwind est branché sur les tokens de design : cette page
-        utilise déjà <code>text-fg-accent</code>, <code>py-4xl</code> et les classes typographiques.
-      </p>
-      <a
-        href="/api/health"
-        className="mt-xl inline-flex min-h-[44px] items-center bg-accent px-lg py-md text-fg-on-accent t-label transition-colors hover:bg-accent-hover"
-      >
-        Vérifier la santé de l&apos;application
-      </a>
-    </main>
+    <>
+      <PublicHeader />
+      <main>
+        <Hero />
+        <StatsBar />
+        <HowItWorks />
+        <Ticker />
+        <PackageList packages={packages} />
+        <FinalCta />
+      </main>
+      <PublicFooter />
+    </>
   );
 }

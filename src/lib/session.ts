@@ -13,8 +13,7 @@ export async function getCurrentUser() {
   return session?.user ?? null;
 }
 
-// A utiliser dans les pages protegees. Renvoie vers la connexion si personne
-// n'est connecte, et vers l'accueil si le compte a ete desactive.
+// Pour pages protégées. Renvoie vers /connexion si non connecté, vers l'accueil si le compte a ete desactive.
 export async function requireUser() {
   const user = await getCurrentUser();
   if (!user) redirect("/connexion");

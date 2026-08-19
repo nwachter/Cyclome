@@ -45,6 +45,7 @@ export default function AdminBottomNav() {
       )}
 
       {isSheetOpen && (
+        // La feuille se pose au dessus de la barre, jamais dessus.
         <div
           className="fixed inset-x-0 z-[1095] border-t-2 border-t-line-strong bg-surface p-md lg:hidden"
           style={{ bottom: NAV_HEIGHT }}
@@ -58,8 +59,8 @@ export default function AdminBottomNav() {
                 onClick={closeSheet}
                 className={`t-label border p-md ${
                   isActive(link.href)
-                    ? "border-accent-subtle text-fg-accent"
-                    : "border-line  text-fg"
+                    ? "border-accent bg-accent-subtle text-fg-accent"
+                    : "border-line bg-canvas text-fg"
                 }`}
               >
                 {link.label}
@@ -93,7 +94,9 @@ export default function AdminBottomNav() {
           aria-expanded={isSheetOpen}
           onClick={() => setIsSheetOpen((open) => !open)}
           className={`t-label-sm flex flex-1 items-center justify-center text-center ${
-            isSheetOpen ? "text-fg-on-accent  shadow-[inset_0_3px_0_#000000]" : "text-fg-subtle"
+            isSheetOpen
+              ? "text-fg-accent shadow-[inset_0_3px_0_var(--color-accent)]"
+              : "text-fg-subtle"
           }`}
         >
           Plus
