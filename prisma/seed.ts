@@ -64,7 +64,7 @@ async function main() {
         "La réparation vélo à domicile. Un service de l'atelier LeCycleLyonnais, ouvert depuis 1958.",
     },
   });
-
+  //
   //Users + Client/Techs/Admin
   console.log("Comptes…");
   const admin = await createUserIfNoneExists(
