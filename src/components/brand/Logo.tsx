@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function Logo({
-  variant = "inverse",
+  variant = "contrast",
   size = 36,
   showBaseline = true,
   href = "/",
@@ -20,11 +20,23 @@ export default function Logo({
       : variant === "inverse"
         ? "/logo-inverse.svg"
         : "/logo-contrast.svg";
-  const wordColor = variant === "inverse" ? "text-fg-on-inverse" : "text-fg";
-  const baselineColor = variant === "inverse" ? "text-fg-on-inverse/70" : "text-fg-subtle";
+  const wordColor =
+    variant === "inverse"
+      ? "text-fg-on-inverse"
+      : variant === "accent"
+        ? "text-fg-on-accent"
+        : "text-fg";
+  //const baselineColor = variant === "inverse" ? "text-fg-on-inverse/70" : "text-fg-subtle";
+
+  const baselineColor =
+    variant === "inverse"
+      ? "text-fg-on-inverse"
+      : variant === "accent"
+        ? "text-fg-on-accent"
+        : "text-fg-subtle";
 
   return (
-    <Link href={href} className="flex items-center gap-sm" aria-label="Cyclôme, accueil">
+    <Link href={href} className="flex  items-center gap-sm" aria-label="Cyclôme, accueil">
       <Image src={file} alt="" width={size} height={Math.round((size * 1024) / 806)} priority />
       <span>
         <span
