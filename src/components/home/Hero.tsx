@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="mx-auto max-w-[1360px] px-xl py-3xl">
+    <section className="mx-auto max-w-[1360px] px-xl lg:py-3xl py-2xl">
       <div className="grid items-center gap-xl lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
         <div className="bg-inverse p-xl text-fg-on-inverse lg:-mr-[44px] lg:p-2xl">
           <h1 className="t-display-1">

@@ -42,8 +42,8 @@ export default function Ticker() {
       <div className="ticker-track inline-flex gap-xl">
         {[0, 1].map((copy) => (
           <span key={copy} className="inline-flex gap-xl">
-            {words.map((word) => (
-              <span key={word} className="t-display-4">
+            {words.map((word, i) => (
+              <span key={`${word}-${i}`} className="t-display-4">
                 {word} <span className="opacity-55">✳</span>
               </span>
             ))}
