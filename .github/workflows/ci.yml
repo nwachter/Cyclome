@@ -89,7 +89,7 @@ jobs:
   deploy:
     name: Déploiement sur le VPS
     runs-on: ubuntu-latest
-    # needs: [quality, e2e]
+    # needs: [quality] #quality, e2e
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     timeout-minutes: 10
     steps:
@@ -108,5 +108,5 @@ jobs:
             docker compose -f docker-compose.prod.yml run --rm migrate
             docker compose -f docker-compose.prod.yml up -d app
             sleep 5
-            docker compose -f docker-compose.prod.yml exec -T app wget -qO- http://localhost:3000/api/health
+            docker compose -f docker-compose.prod.yml exec -T app wget -qO- http://127.0.0.1:3000/api/health
             docker image prune -f
