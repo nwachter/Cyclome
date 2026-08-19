@@ -30,6 +30,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 40s
 
   # Conteneur migrations pour déployer les migrations en production
   # Lancement manuel : docker compose -f docker-compose.prod.yml run --rm migrate

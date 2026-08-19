@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import PublicHeader from "@/components/layout/PublicHeader";
 import PublicFooter from "@/components/layout/PublicFooter";
 import Hero from "@/components/home/Hero";
