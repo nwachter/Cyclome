@@ -11,7 +11,7 @@ npm install
 cp .env.example .env        # puis renseigner BETTER_AUTH_SECRET
 npm run db:up               # PostgreSQL + Adminer
 npx prisma generate
-npm run db:migrate -- --name init
+npm run db:migrate -- --name init # script pour migrer prisma
 npm run db:seed
 npm run dev
 ```
@@ -34,6 +34,7 @@ npm run dev
 ```
 prisma/          schéma, migrations, jeu de données de départ
 src/app/         routes, mises en page, routes d'API
+src/components   composants réutilisables (headers, menus, cartes, boutons, etc. )
 src/lib/         règles métier réutilisables (créneaux, géographie, validation)
 src/server/      cas d'usage transactionnels (réservation, annulation)
 design/          tokens partagés avec Figma

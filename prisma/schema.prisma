@@ -1,23 +1,3 @@
-// =============================================================================
-// CYCLÔME : schéma de données
-//
-// Transcription directe du MCD. Chaque modèle et chaque champ porte un @map
-// vers le nom exact du MCD : la base physique est donc identique au script SQL
-// du dossier de conception, ce qui rend la correspondance vérifiable à l'oral.
-//
-// Trois conventions de traduction :
-//   CURRENCY                -> Decimal(10, 2)
-//   LOGICAL                 -> Boolean
-//   GEOGRAPHY(POINT|POLYGON) -> Json au format GeoJSON
-//     Le cahier des charges technique écarte l'extension PostGIS : les tracés
-//     sont stockés en GeoJSON et lus directement par Turf.js.
-//
-// Les tables Session, Account et Verification ne figurent pas au MCD : elles
-// sont générées et maintenues par Better Auth. Account porte le hachage du mot
-// de passe (providerId = "credential"), ce qui explique son absence de User_.
-// Régénérez ce bloc avec `npm run auth:generate` après une montée de version.
-// =============================================================================
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -67,7 +47,6 @@ model User {
   name          String     @map("user_name") @db.VarChar(300)
   role          UserRole?  @default(CLIENT) @map("user_role")
   image      String?    @map("user_image_url") @db.VarChar(150)
-  //also delete Session lines for deactivated / deconnected users
   status        String     @default("ACTIVE") @map("user_status") @db.VarChar(20)
   emailVerified Boolean    @default(false) @map("user_email_verified")
   createdAt     DateTime   @default(now()) @map("user_created_at")
@@ -159,7 +138,7 @@ model Client {
 model Technician {
   id            Int            @id @default(autoincrement()) @map("technician_id") @db.SmallInt
   phone         String?        @map("technician_phone") @db.VarChar(15)
-  //Dernière position connue, alimentée pendant une intervention
+  //Dernière position connue pendant une intervention
   location      Json?          @map("technician_location")
   userId        String         @unique @map("id_user") @db.VarChar(50)
 
@@ -263,7 +242,7 @@ model Availability {
   @@map("availability")
 }
 
-// 1 créneau = max une intervention Intervention.slotId).  un forfait plus long démarre sur l'un d'eux et marque `booked` ceux qu'il recouvre (transaction de réservation)
+// 1 créneau = max une intervention Intervention.slotId).  un forfait plus long démarre sur l'un d'eux et marque ""booked" ceux qu'il recouvre (transaction de réservation)
 model Slot {
   id             Int           @id @default(autoincrement()) @map("slot_id")
   startDate      DateTime      @map("slot_start_date")
@@ -325,7 +304,7 @@ model Intervention {
   @@map("intervention")
 }
 
-/// Le moment de la prise de vue est porté par `stage`, l'auteur par la clé étrangère vers l'utilisateur. rôle de l'auteur déduit via jointure
+// Le moment de la photo est stocké dans stage
 model Picture {
   id             Int          @id @default(autoincrement()) @map("picture_id")
   url            String       @map("picture_url") @db.VarChar(150)
